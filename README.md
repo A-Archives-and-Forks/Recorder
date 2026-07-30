@@ -764,9 +764,9 @@ mockRec.stop(function(blob,duration){
 ### 【静态方法】Recorder.SampleData(pcmDatas,pcmSampleRate,newSampleRate,prevChunkInfo,option)
 对pcm数据的采样率进行转换，支持流式转换，可配合mock方法可转换成音频文件，比如实时转换成小片段语音文件。
 
-**注意：**从241020版本开始，支持任意采样率转换；之前的老版本只会将高采样率的pcm转成低采样率的pcm，老版本由低转高时不会进行转换处理。
+**注意：** 从241020版本开始，支持任意采样率转换；之前的老版本只会将高采样率的pcm转成低采样率的pcm，老版本由低转高时不会进行转换处理。
 
-**注意：**260708之前的版本，流式转换存在缺陷会增加噪音（单次完整转换正常），此版本已修复，流式转换结果和单次完整转换结果一致
+**注意：** 260708之前的版本，流式转换存在缺陷会增加噪音（单次完整转换正常），此版本已修复，流式转换结果和单次完整转换结果一致
 
 `pcmDatas`: [[Int16,...]] pcm片段列表，二维数组，比如可以是：rec.buffers、onProcess中的buffers；二维数组里面是Int16Array，也可传Float32Array（会转成Int16Array）
 
@@ -1111,6 +1111,9 @@ stream.resume();
 
 //不要播放了就调用stop停止播放，关闭所有资源
 stream.stop();
+
+//实时设置播放音量：取值0.0-5.0（超过5也行，但削峰严重音质明显变差），0.0静音，1.0不改变音量，0.5降低一倍音量，2.0放大一倍音量；注意：此参数不是修改设备系统音量，是播放时pcm数据直接*volume
+stream.volume=0.5;
 ```
 
 ### 【方法】stream.input(anyData)
@@ -1485,7 +1488,7 @@ False(msg)
 ## mp3 (CBR) 格式
 依赖文件：`mp3.js + mp3-engine.js`（或使用根目录的`recorder.mp3.min.js`一个文件即可），支持实时编码（边录边转码），采用的是[lamejs](https://github.com/zhuker/lamejs)(LGPL License)这个库的代码，`https://github.com/zhuker/lamejs/blob/bfb7f6c6d7877e0fe1ad9e72697a871676119a0e/lame.all.js`这个版本的文件代码；已对lamejs源码进行了部分改动，用于精简代码和修复发现的问题。LGPL协议涉及到的文件：`mp3-engine.js`；这些文件也采用LGPL授权，不适用MIT协议。源码366kb大小，压缩后130kb左右，开启gzip后60来k。[mp3转其他格式参考和测试](https://xiangyuecn.github.io/Recorder/assets/工具-代码运行和静态分发Runtime.html?jsname=lib.transform.mp32other)
 
-**注意：**mp3编码器内部默认会自动进行低通滤波处理，来保证低比特率时把有限的比特数留给更重要的中低频，主动切掉一部分人耳不敏感的超高频信号；会导致16k采样率16kbps默认低通5550hz，声音沉闷但中低频厚实干净，禁用低通滤波后满频8k 音色丰富可提升清晰度 但会增加噪声 如金属音、水声。
+**注意：** mp3编码器内部默认会自动进行低通滤波处理，来保证低比特率时把有限的比特数留给更重要的中低频，主动切掉一部分人耳不敏感的超高频信号；会导致16k采样率16kbps默认低通5550hz，声音沉闷但中低频厚实干净，禁用低通滤波后满频8k 音色丰富可提升清晰度 但会增加噪声 如金属音、水声。
 
 低通滤波行为可通过`set.engine_mp3_lowpassfreq`来配置，默认0动态取低通截止频率，设为-1禁用，其他值为指定低通频率；另外可通过`Recorder.Set_engine_mp3_lowpassfreq`来进行全局配置（优先级比set内的低）；为260708版本新增。
 

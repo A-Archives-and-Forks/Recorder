@@ -1,7 +1,7 @@
 /******************
 《【教程】【音频流】【播放】实时解码播放音频片段》
 作者：高坚果
-时间：2021-08-03 22:08:06
+时间：2021-08-03 22:08:06  更新：2026-07-30 16:57
 
 本教程是 BufferStreamPlayer扩展 (src/extensions/buffer_stream.player.js) 的使用示例 。
 
@@ -124,6 +124,14 @@ var resume=function(){
 	}
 };
 
+var setVolume=function(){
+	if(stream){
+		var vol=+$(".in_setVolume").val();
+		if(!vol && vol!==0 || vol<0) return Runtime.Log("音量值无效");
+		stream.volume=vol;
+		Runtime.Log("已设置音量"+vol);
+	}
+};
 
 var clearInput=function(){
 	if(stream){
@@ -261,6 +269,11 @@ Runtime.Ctrls([
 	,{name:"暂停网络接收，全部丢弃",click:"receivePause"}
 	,{name:"恢复接收",click:"receiveResume"}
 	,{html:'<span style="font-size:12px">模拟服务器长时间没有数据发送</span>'}
+	
+	,{html:"<hr/>"}
+	,{name:"设置音量",click:"setVolume"}
+	,{html:'<input class="in_setVolume" style="width:50px" value="1" placeholder="音量">'}
+	,{html:'<span style="font-size:12px">实时设置播放音量：取值0.0-5.0（超过5也行，但削峰严重音质明显变差），0.0静音，1.0不改变音量，0.5降低一倍音量，2.0放大一倍音量</span>'}
 	
 	,{html:"<hr/>"}
 ]);
